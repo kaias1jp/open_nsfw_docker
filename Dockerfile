@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:18.04
 MAINTAINER root@kksg.net
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -32,6 +32,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         python-numpy \
         python-pip \
         libssl-dev \
+	curl \
         python-scipy && \
     rm -rf /var/lib/apt/lists/*
 
@@ -47,10 +48,11 @@ RUN git clone -b ${CLONE_TAG} --depth 1 https://github.com/BVLC/caffe.git . && \
     cmake -DCPU_ONLY=1 .. && \
     make -j"$(nproc)"
 
+RUN curl https://bootstrap.pypa.io/get-pip.py | python
 RUN pip install setuptools
 RUN pip install pip-review
 RUN pip install bottle
-RUN pip install requests[security]
+RUN pip install requests
 
 ENV PYCAFFE_ROOT $CAFFE_ROOT/python
 ENV PYTHONPATH $PYCAFFE_ROOT:$PYTHONPATH
